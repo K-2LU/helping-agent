@@ -7,10 +7,22 @@
 |
 */
 
+import User from '#models/user'
 import router from '@adonisjs/core/services/router'
 
 router.get('/', async () => {
   return {
     hello: 'world',
+  }
+})
+
+
+router.post('/users/:id/tokens', async({ params }) => {
+  const user = await User.findOrFail(params.id);
+  const token = await User.accessTokens.create(user);
+
+  return {
+    type: 'bearer',
+    value: token.value!.release(),
   }
 })
