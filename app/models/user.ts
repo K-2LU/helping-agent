@@ -8,7 +8,7 @@ import OccupationHistory from './occupation_history.js'
 import type { HasMany } from '@adonisjs/lucid/types/relations'
 
 const AuthFinder = withAuthFinder(() => hash.use('scrypt'), {
-  uids: ['email'],
+  uids: ['phone_number'],
   passwordColumnName: 'password',
 })
 
