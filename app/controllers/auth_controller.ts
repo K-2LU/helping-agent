@@ -18,10 +18,13 @@ export default class AuthController {
 
                         return !user;
                     }),
-                password: vine.string().minLength(8),
+                password: vine.string()
+                    .minLength(8)
+                    .maxLength(32)
+                ,
             })
         )
-        
+
         const payload = await request.validateUsing(validator);
         const user = await User.create({
             name: payload.name,
