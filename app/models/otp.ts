@@ -16,7 +16,7 @@ export default class Otp extends BaseModel {
   @column()
   declare purpose: 'verification' | 'reset'
 
-  @column()
+  @column.dateTime()
   declare expiresAt: DateTime
 
   @column.dateTime({ autoCreate: true })
