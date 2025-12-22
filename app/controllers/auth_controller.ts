@@ -78,6 +78,13 @@ export default class AuthController {
 
     async sendOtp({ auth, response }: HttpContext) {
         const user = auth.getUserOrFail()
+
+        if (user.verified) {
+            return response.conflict({
+                message: 'User already verified'
+            })
+        }
+
         await this.otpService.send(user, 'verification')
 
         return response.ok({
@@ -90,7 +97,7 @@ export default class AuthController {
 
         const { code } = await request.validateUsing(OtpValidator, {
             messagesProvider: new SimpleMessagesProvider({
-                'required' : 'OTP is required'
+                'required': 'OTP is required'
             })
         });
 
