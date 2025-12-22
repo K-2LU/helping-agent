@@ -6,7 +6,6 @@ import { OtpValidator } from '#validators/otp';
 import { inject } from '@adonisjs/core';
 import type { HttpContext } from '@adonisjs/core/http'
 import { SimpleMessagesProvider } from '@vinejs/vine';
-import vine from '@vinejs/vine';
 
 @inject()
 export default class AuthController {
