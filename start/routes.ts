@@ -29,4 +29,6 @@
     }
   })
 
-  router.post('/signup', [AuthController, 'signup'])
+  router.group(() => {
+    router.post('/signup', [AuthController, 'signup'])
+  }). prefix('/v1/auth');
