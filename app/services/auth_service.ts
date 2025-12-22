@@ -1,5 +1,5 @@
 import User from "#models/user";
-import { SignUpPayload } from "#types/auth";
+import { LoginPayload, SignUpPayload } from "#types/auth";
 import { AccessToken } from "@adonisjs/auth/access_tokens";
 
 export class AuthService {
@@ -19,5 +19,17 @@ export class AuthService {
     const token = await User.accessTokens.create(user)
 
     return { user, token }
+  }
+
+  async login(payload: LoginPayload):
+    Promise<{
+      token: AccessToken
+    }
+    > {
+    const user = await User.verifyCredentials(payload.phoneNumber, payload.password);
+
+    const token = await User.accessTokens.create(user);
+
+    return { token };
   }
 }

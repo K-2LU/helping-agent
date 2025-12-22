@@ -8,22 +8,23 @@ import { SimpleMessagesProvider } from '@vinejs/vine';
 @inject()
 export default class AuthController {
 
-    constructor(protected authService: AuthService) {}
+    constructor(protected authService: AuthService) { }
 
     async signup({ request, response }: HttpContext) {
         const payload = await request.validateUsing(
             signupValidator,
             {
                 messagesProvider: new SimpleMessagesProvider({
-                    'phoneNumber.unique': 'Phone number already in use.',
+                    'phoneNumber.database.unique': 'Phone number already in use.',
                     'password.minLength': 'Your password must be 8+ characters.',
+                    'phoneNumber.required' : 'Phone Number is required',
                     'required': '{{ field }} field is required.'
                 })
             }
         );
 
         const { user, token } = await this.authService.signup(payload);
-        
+
         return response.created({
             type: 'bearer ',
             token: token.value?.release(),
@@ -34,13 +35,14 @@ export default class AuthController {
     async login({ request, response }: HttpContext) {
         const { phoneNumber, password } = await request.validateUsing(loginValidator, {
             messagesProvider: new SimpleMessagesProvider({
-                'required' : 'Enter required {{ field }}'
+                'required': 'Enter required {{ field }}'
             })
         });
 
-        const user = await User.verifyCredentials(phoneNumber, password);
-
-        const token = await User.accessTokens.create(user);
+        const { token } = await this.authService.login({
+            phoneNumber,
+            password
+        })
 
         return response.ok({
             type: 'bearer ',
