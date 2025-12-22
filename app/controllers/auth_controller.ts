@@ -34,4 +34,16 @@ export default class AuthController {
             token: token.value?.release(),
         })
     }
+
+    async logout({auth, response}: HttpContext) {
+        const user = auth.getUserOrFail();
+
+        const token = user.currentAccessToken.identifier;
+        if (!token) {
+            return response.badRequest({message: 'Token not found'});
+        }
+
+        await User.accessTokens.delete(user, token);
+        return response.ok({ message: 'Log out successfull'})
+    }
 }
