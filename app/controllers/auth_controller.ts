@@ -1,5 +1,6 @@
 import User from '#models/user'
 import { AuthService } from '#services/auth_service';
+import { OtpService } from '#services/otp_service';
 import { loginValidator, signupValidator } from '#validators/auth';
 import { inject } from '@adonisjs/core';
 import type { HttpContext } from '@adonisjs/core/http'
@@ -8,7 +9,10 @@ import { SimpleMessagesProvider } from '@vinejs/vine';
 @inject()
 export default class AuthController {
 
-    constructor(protected authService: AuthService) { }
+    constructor(
+        protected authService: AuthService,
+        protected otpService: OtpService
+    ) { }
 
     async signup({ request, response }: HttpContext) {
         const payload = await request.validateUsing(
@@ -17,7 +21,7 @@ export default class AuthController {
                 messagesProvider: new SimpleMessagesProvider({
                     'phoneNumber.database.unique': 'Phone number already in use.',
                     'password.minLength': 'Your password must be 8+ characters.',
-                    'phoneNumber.required' : 'Phone Number is required',
+                    'phoneNumber.required': 'Phone Number is required',
                     'required': '{{ field }} field is required.'
                 })
             }
@@ -62,11 +66,20 @@ export default class AuthController {
         return response.ok({ message: 'Log out successfull' })
     }
 
-    async me({auth, response}: HttpContext) {
+    async me({ auth, response }: HttpContext) {
         const user = auth.getUserOrFail();
 
         const userData = await this.authService.me(user);
-        
+
         return response.ok(userData);
+    }
+
+    async sendOtp({ auth, response }: HttpContext) {
+        const user = auth.getUserOrFail()
+        await this.otpService.send(user, 'verification')
+
+        return response.ok({
+            message : 'New OTP sent'
+        })
     }
 }
