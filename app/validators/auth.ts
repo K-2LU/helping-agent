@@ -19,3 +19,10 @@ export const signupValidator = vine.compile(
         ,
     })
 )
+
+export const loginValidator = vine.compile(
+    vine.object({
+        phoneNumber: vine.string().mobile().trim(),
+        password: vine.string().minLength(8).maxLength(32),
+    })
+)
