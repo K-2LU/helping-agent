@@ -11,6 +11,7 @@
   import router from '@adonisjs/core/services/router'
 
   import AuthController from '#controllers/auth_controller'
+import { middleware } from './kernel.js'
 
   router.get('/', async () => {
     return {
