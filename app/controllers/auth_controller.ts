@@ -5,6 +5,7 @@ import { loginValidator, signupValidator } from '#validators/auth';
 import { inject } from '@adonisjs/core';
 import type { HttpContext } from '@adonisjs/core/http'
 import { SimpleMessagesProvider } from '@vinejs/vine';
+import vine from '@vinejs/vine';
 
 @inject()
 export default class AuthController {
@@ -79,7 +80,33 @@ export default class AuthController {
         await this.otpService.send(user, 'verification')
 
         return response.ok({
-            message : 'New OTP sent'
+            message: 'New OTP sent'
+        })
+    }
+
+    async verifyOtp({ auth, request, response }: HttpContext) {
+        const user = auth.getUserOrFail()
+
+        const { code } = await request.validateUsing(
+            vine.compile(
+                vine.object({
+                    code: vine.string().fixedLength(6)
+                })
+            )
+        )
+
+        const isValid = await this.otpService.verify(user, code, 'verification');
+        if (!isValid) {
+            return response.badRequest({
+                message: 'Invalid or expired OTP'
+            })
+        }
+
+        user.verified = true;
+        await user.save()
+
+        return response.ok({
+            message: "User verification successful"
         })
     }
 }
