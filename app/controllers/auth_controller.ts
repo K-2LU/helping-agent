@@ -33,7 +33,11 @@ export default class AuthController {
     }
 
     async login({ request, response }: HttpContext) {
-        const { phoneNumber, password } = await request.validateUsing(loginValidator);
+        const { phoneNumber, password } = await request.validateUsing(loginValidator, {
+            messagesProvider: new SimpleMessagesProvider({
+                'required' : 'Enter required {{ field }}'
+            })
+        });
 
         const user = await User.verifyCredentials(phoneNumber, password);
 
