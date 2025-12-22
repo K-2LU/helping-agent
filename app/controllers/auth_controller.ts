@@ -6,7 +6,6 @@ import { OtpValidator } from '#validators/otp';
 import { inject } from '@adonisjs/core';
 import type { HttpContext } from '@adonisjs/core/http'
 import { SimpleMessagesProvider } from '@vinejs/vine';
-import vine from '@vinejs/vine';
 
 @inject()
 export default class AuthController {
@@ -78,6 +77,13 @@ export default class AuthController {
 
     async sendOtp({ auth, response }: HttpContext) {
         const user = auth.getUserOrFail()
+
+        if (user.verified) {
+            return response.conflict({
+                message: 'User already verified'
+            })
+        }
+
         await this.otpService.send(user, 'verification')
 
         return response.ok({
@@ -90,7 +96,7 @@ export default class AuthController {
 
         const { code } = await request.validateUsing(OtpValidator, {
             messagesProvider: new SimpleMessagesProvider({
-                'required' : 'OTP is required'
+                'required': 'OTP is required'
             })
         });
 
