@@ -19,8 +19,14 @@ router.get('/', async () => {
 })
 
 router.group(() => {
-  router.post('/signup', [AuthController, 'signup']);
-  router.post('/login', [AuthController, 'login']);
-  router.post('/logout', [AuthController, 'logout'])
-    .use(middleware.auth());
+  router.group(() => {
+    router.post('/signup', [AuthController, 'signup']);
+    router.post('/login', [AuthController, 'login']);
+
+  })
+
+  router.group(() => {
+    router.post('/logout', [AuthController, 'logout'])
+    router.post('/me', [AuthController, 'me'])
+  }).use(middleware.auth())
 }).prefix('/v1/auth');
