@@ -1,9 +1,15 @@
 import User from '#models/user'
+import { AuthService } from '#services/auth_service';
 import { loginValidator, signupValidator } from '#validators/auth';
+import { inject } from '@adonisjs/core';
 import type { HttpContext } from '@adonisjs/core/http'
 import { SimpleMessagesProvider } from '@vinejs/vine';
 
+@inject()
 export default class AuthController {
+
+    constructor(protected authService: AuthService) {}
+
     async signup({ request, response }: HttpContext) {
         const payload = await request.validateUsing(
             signupValidator,
@@ -15,16 +21,9 @@ export default class AuthController {
                 })
             }
         );
-        const user = await User.create({
-            name: payload.name,
-            phoneNumber: payload.phoneNumber,
-            location: payload.location,
-            password: payload.password,
-            verified: true,
-        })
 
-        const token = await User.accessTokens.create(user)
-
+        const { user, token } = await this.authService.signup(payload);
+        
         return response.created({
             type: 'bearer ',
             token: token.value?.release(),
