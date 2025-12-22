@@ -8,6 +8,10 @@ export default class AuthController {
             'name', 'phoneNumber', 'password', 'location'
         ]);
 
+        if(!data.name || !data.location || !data.password || !data.phoneNumber) {
+            return response.abort({message: `missing required field`});
+        }
+
         const exists = await User.query()
             .where('phone_number', data.phoneNumber)
             .first();
