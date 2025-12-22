@@ -61,4 +61,12 @@ export default class AuthController {
         await User.accessTokens.delete(user, token);
         return response.ok({ message: 'Log out successfull' })
     }
+
+    async me({auth, response}: HttpContext) {
+        const user = auth.getUserOrFail();
+
+        const userData = await this.authService.me(user);
+        
+        return response.ok(userData);
+    }
 }
