@@ -19,17 +19,6 @@ router.get('/', async () => {
   }
 })
 
-
-router.post('/users/:id/tokens', async ({ params }) => {
-  const user = await User.findOrFail(params.id);
-  const token = await User.accessTokens.create(user);
-
-  return {
-    type: 'bearer',
-    value: token.value!.release(),
-  }
-})
-
 router.group(() => {
   router.post('/signup', [AuthController, 'signup']);
   router.post('/login', [AuthController, 'login']);
