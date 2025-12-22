@@ -1,31 +1,34 @@
 import User from '#models/user'
 import type { HttpContext } from '@adonisjs/core/http'
-import hash from '@adonisjs/core/services/hash';
+import vine from '@vinejs/vine';
 
 export default class AuthController {
     async signup({ request, response }: HttpContext) {
-        const data = request.only([
-            'name', 'phoneNumber', 'password', 'location'
-        ]);
 
-        if(!data.name || !data.location || !data.password || !data.phoneNumber) {
-            return response.abort({message: `missing required field`});
-        }
+        const validator = vine.compile(
+            vine.object({
+                name: vine.string().trim().minLength(3),
+                location: vine.string().trim(),
+                phoneNumber: vine.string().
+                    mobile()
+                    .unique(async (db, value) => {
+                        const user = await db.from('users')
+                            .where('phone_number', value)
+                            .first();
 
-        const exists = await User.query()
-            .where('phone_number', data.phoneNumber)
-            .first();
-
-        if (exists) {
-            return response.conflict({message: 'entry already exists'})
-        }
-
+                        return !user;
+                    }),
+                password: vine.string().minLength(8),
+            })
+        )
+        
+        const payload = await request.validateUsing(validator);
         const user = await User.create({
-            name: data.name,
-            phoneNumber: data.phoneNumber,
-            location: data.location,
-            password: await hash.make(data.password),
-            verified: false
+            name: payload.name,
+            phoneNumber: payload.phoneNumber,
+            location: payload.location,
+            password: payload.password,
+            verified: true,
         })
 
         const token = await User.accessTokens.create(user)
