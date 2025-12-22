@@ -7,7 +7,6 @@
 |
 */
 
-import User from '#models/user'
 import router from '@adonisjs/core/services/router'
 
 import AuthController from '#controllers/auth_controller'
