@@ -4,3 +4,8 @@ export interface SignUpPayload {
     location: string;
     password: string;
 }
+
+export interface LoginPayload {
+    phoneNumber: string;
+    password: string;
+}
