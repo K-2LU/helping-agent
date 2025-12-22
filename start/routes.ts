@@ -28,5 +28,6 @@ router.group(() => {
   router.group(() => {
     router.post('/logout', [AuthController, 'logout'])
     router.post('/me', [AuthController, 'me'])
+    router.post('/send-otp', [AuthController, 'sendOtp'])
   }).use(middleware.auth())
 }).prefix('/v1/auth');
