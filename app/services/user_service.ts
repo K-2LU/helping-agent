@@ -1,9 +1,9 @@
 import User from "#models/user";
-import { UserType } from "#types/user";
+import { PublicUserType } from "#types/user";
 import db from "@adonisjs/lucid/services/db";
 
 export class UserService {
-  async getAll(): Promise<UserType[]> {
+  async getAll(): Promise<PublicUserType[]> {
     const dbUsers = await User.query()
       .select('users.*')
       .select(
@@ -16,7 +16,7 @@ export class UserService {
           .as('active_occupation_name')
       )
 
-      const publicUsers: UserType[] = dbUsers.map((user) => {
+      const publicUsers: PublicUserType[] = dbUsers.map((user) => {
         return {
           data: {
             name: user.name,
