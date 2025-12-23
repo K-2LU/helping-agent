@@ -10,6 +10,5 @@
 import router from '@adonisjs/core/services/router'
 import UsersController from '#controllers/users_controller'
 
-import './routes/auth_routes.js'
-
-router.get('/get-all', [UsersController, 'getAll']);
+import './routes/v1/auth_routes.js'
+import './routes/v1/user_routes.js'
