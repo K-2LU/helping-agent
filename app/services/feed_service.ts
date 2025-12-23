@@ -1,9 +1,12 @@
 import User from "#models/user";
+import { PaginatedResult } from "#types/common";
 import { PublicUserType } from "#types/user";
 import { DateTime } from "luxon";
 
-export class UserService {
-  async getAll(): Promise<PublicUserType[]> {
+export class FeedService {
+  async getAllUsers(page: number, limit: number)
+  : Promise<PaginatedResult<PublicUserType>> 
+  {
     const currentDate = DateTime.now().toISODate();
 
     const dbUsers = await User.query()
@@ -16,11 +19,11 @@ export class UserService {
               .orWherePivot('ending_date', ">=", currentDate)
           })
           .orderBy('starting_date', 'desc')
-          .limit(1)
       })
+      .paginate(page, limit)
 
-    const publicUsers: PublicUserType[] = dbUsers.map((user) => {
-      const activeJob = user.occupations[0] || null;
+    const publicUsers: PublicUserType[] = dbUsers.all().map((user) => {
+      const mostRecentJob = user.occupations[0] || null;
 
       return {
         data: {
@@ -29,10 +32,15 @@ export class UserService {
           location: user.location,
           verified: user.verified,
         },
-        occupation: activeJob ? activeJob.name : null,
+        occupation: mostRecentJob ? mostRecentJob.name : 'None',
       }
     })
 
-    return publicUsers;
+    const serializedData = dbUsers.serialize();
+
+    return {
+      meta: serializedData.meta,
+      data: publicUsers
+    }
   }
 }
