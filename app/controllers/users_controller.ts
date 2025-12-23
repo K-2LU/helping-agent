@@ -9,10 +9,13 @@ export default class UsersController {
         protected userService: UserService
     ) { }
 
-    async getAll({ response }: HttpContext) {
-        const publicUsers = await this.userService.getAll();
+    async getAll({ request, response }: HttpContext) {
+        const page = request.input('page', 1);
+        const limit = request.input('limit', 10);
 
-        return response.ok(publicUsers);
+        const result = await this.userService.getAll(page, limit);
+        
+        return response.ok(result);
     }
 
 }
