@@ -1,11 +1,12 @@
 import { DateTime } from 'luxon'
 import hash from '@adonisjs/core/services/hash'
 import { compose } from '@adonisjs/core/helpers'
-import { BaseModel, column, hasMany } from '@adonisjs/lucid/orm'
+import { BaseModel, column, hasMany, manyToMany } from '@adonisjs/lucid/orm'
 import { withAuthFinder } from '@adonisjs/auth/mixins/lucid'
 import { DbAccessTokensProvider } from '@adonisjs/auth/access_tokens'
 import OccupationHistory from './occupation_history.js'
-import type { HasMany } from '@adonisjs/lucid/types/relations'
+import type { HasMany, ManyToMany } from '@adonisjs/lucid/types/relations'
+import Occupation from './occupation.js'
 
 const AuthFinder = withAuthFinder(() => hash.use('scrypt'), {
   uids: ['phone_number'],
@@ -33,6 +34,14 @@ export default class User extends compose(BaseModel, AuthFinder) {
 
   @column()
   declare location: string;
+
+  @manyToMany(() => Occupation, {
+    pivotTable: 'occupation_histories',
+    pivotTimestamps: true,
+    pivotColumns: ['starting_date', 'ending_date'],
+  })
+  
+  declare occupations: ManyToMany<typeof Occupation>
 
   @hasMany(() => OccupationHistory)
   declare occupationHistory: HasMany<typeof OccupationHistory>

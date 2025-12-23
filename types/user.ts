@@ -4,3 +4,8 @@ export interface UserData {
     readonly location: string;
     readonly verified: boolean;
 }
+
+export interface PublicUserType {
+    data: UserData;
+    occupation: string | null;
+}
