@@ -40,8 +40,12 @@ export default class User extends compose(BaseModel, AuthFinder) {
     pivotTimestamps: true,
     pivotColumns: ['starting_date', 'ending_date'],
   })
-  
   declare occupations: ManyToMany<typeof Occupation>
+
+  @hasMany(() => Occupation,{
+    foreignKey: 'createdBy',
+  })
+  declare createdOccupations: HasMany<typeof Occupation>
 
   @hasMany(() => OccupationHistory)
   declare occupationHistory: HasMany<typeof OccupationHistory>
