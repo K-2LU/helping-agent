@@ -9,7 +9,7 @@ export class UserService {
       .select(
         db.from('occupation_histories')
           .join('occupations', 'occupations.id', 'occupation_histories.occupation_id')
-          .whereColumn('occupation_histories.user_id', 'user.id')
+          .whereColumn('occupation_histories.user_id', 'users.id')
           .orderBy('occupation_histories.starting_date', 'desc')
           .limit(1)
           .select('occupations.name')
