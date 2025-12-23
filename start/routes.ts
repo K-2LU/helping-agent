@@ -6,29 +6,5 @@
 | The routes file is used for defining the HTTP routes.
 |
 */
-
-import router from '@adonisjs/core/services/router'
-
-import AuthController from '#controllers/auth_controller'
-import { middleware } from './kernel.js'
-
-router.get('/', async () => {
-  return {
-    hello: 'world',
-  }
-})
-
-router.group(() => {
-  router.group(() => {
-    router.post('/signup', [AuthController, 'signup']);
-    router.post('/login', [AuthController, 'login']);
-
-  })
-
-  router.group(() => {
-    router.post('/logout', [AuthController, 'logout'])
-    router.post('/me', [AuthController, 'me'])
-    router.post('/send-otp', [AuthController, 'sendOtp'])
-    router.post('/verify-otp', [AuthController, 'verifyOtp'])
-  }).use(middleware.auth())
-}).prefix('/v1/auth');
+import './routes/v1/auth_routes.js'
+import './routes/v1/user_routes.js'
