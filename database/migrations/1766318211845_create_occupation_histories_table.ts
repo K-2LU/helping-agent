@@ -9,6 +9,9 @@ export default class extends BaseSchema {
       table.integer('user_id')
       table.integer('occupation_id')
 
+      table.date('starting_date').notNullable()
+      table.date('ending_date')
+
       table.timestamp('created_at', {useTz: true})
       table.timestamp('updated_at', {useTz: true})
     })
