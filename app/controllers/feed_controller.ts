@@ -5,7 +5,7 @@ import { paginationValidatorWithDefault } from '#validators/paginate';
 import { FeedService } from '#services/feed_service';
 
 @inject()
-export default class UsersController {
+export default class FeedController {
     constructor(
         protected feedService: FeedService
     ) { }
