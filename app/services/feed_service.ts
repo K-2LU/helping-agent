@@ -3,8 +3,8 @@ import { PaginatedResult } from "#types/common";
 import { PublicUserType } from "#types/user";
 import { DateTime } from "luxon";
 
-export class UserService {
-  async getAll(page: number, limit: number)
+export class FeedService {
+  async getAllUsers(page: number, limit: number)
   : Promise<PaginatedResult<PublicUserType>> 
   {
     const currentDate = DateTime.now().toISODate();

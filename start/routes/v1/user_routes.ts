@@ -1,11 +1,11 @@
 import router from "@adonisjs/core/services/router";
-const UsersController = () => import("#controllers/users_controller");
+const FeedController = () => import("#controllers/feed_controller");
 
 router.group(() => {
     // public routes
     router.group(()=>{
-        router.get('/get-all', [UsersController, 'getAll'])
+        router.get('/get-all', [FeedController, 'getAllUsers'])
     })
 
     // protected routes
-}).prefix('/v1/user') 
+}).prefix('/v1/feed') 

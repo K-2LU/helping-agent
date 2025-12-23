@@ -1,22 +1,22 @@
 import type { HttpContext } from '@adonisjs/core/http'
 
-import { UserService } from "#services/user_service";
 import { inject } from "@adonisjs/core";
 import { paginationValidator } from '#validators/paginate';
+import { FeedService } from '#services/feed_service';
 
 @inject()
 export default class UsersController {
     constructor(
-        protected userService: UserService
+        protected feedService: FeedService
     ) { }
 
-    async getAll({ request, response }: HttpContext) {
+    async getAllUsers({ request, response }: HttpContext) {
         const payload = await request.validateUsing(paginationValidator)
 
         const page = payload.page || 1;
         const limit = payload.limit || 10;
 
-        const result = await this.userService.getAll(page, limit);
+        const result = await this.feedService.getAllUsers(page, limit);
         
         return response.ok(result);
     }
