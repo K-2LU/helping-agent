@@ -7,5 +7,5 @@ export interface UserData {
 
 export interface User {
     data: UserData;
-    occupation: string;
+    occupation: string | null;
 }
