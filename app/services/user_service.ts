@@ -1,33 +1,38 @@
 import User from "#models/user";
 import { PublicUserType } from "#types/user";
-import db from "@adonisjs/lucid/services/db";
+import { DateTime } from "luxon";
 
 export class UserService {
   async getAll(): Promise<PublicUserType[]> {
-    const dbUsers = await User.query()
-      .select('users.*')
-      .select(
-        db.from('occupation_histories')
-          .join('occupations', 'occupations.id', 'occupation_histories.occupation_id')
-          .whereColumn('occupation_histories.user_id', 'users.id')
-          .orderBy('occupation_histories.starting_date', 'desc')
-          .limit(1)
-          .select('occupations.name')
-          .as('active_occupation_name')
-      )
+    const currentDate = DateTime.now().toISODate();
 
-      const publicUsers: PublicUserType[] = dbUsers.map((user) => {
-        return {
-          data: {
-            name: user.name,
-            phoneNumber: user.phoneNumber,
-            location: user.location,
-            verified: !!user.verified,
-          },
-          occupation: user.$extras.active_occupation_name || null
-        }
+    const dbUsers = await User.query()
+      .preload('occupations', (query) => {
+        query
+          .wherePivot('starting_date', "<=", currentDate)
+          .andWhere((group) => {
+            group
+              .whereNullPivot('ending_date')
+              .orWherePivot('ending_date', ">=", currentDate)
+          })
+          .orderBy('starting_date', 'desc')
+          .limit(1)
       })
 
-      return publicUsers;
+    const publicUsers: PublicUserType[] = dbUsers.map((user) => {
+      const activeJob = user.occupations[0] || null;
+
+      return {
+        data: {
+          name: user.name,
+          phoneNumber: user.phoneNumber,
+          location: user.location,
+          verified: user.verified,
+        },
+        occupation: activeJob ? activeJob.name : null,
+      }
+    })
+
+    return publicUsers;
   }
 }
