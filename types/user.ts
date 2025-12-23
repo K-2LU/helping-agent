@@ -5,7 +5,7 @@ export interface UserData {
     readonly verified: boolean;
 }
 
-export interface User {
+export interface UserType {
     data: UserData;
     occupation: string | null;
 }
