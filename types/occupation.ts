@@ -3,3 +3,8 @@ export interface CreateOccupationDTO {
     details: string;
     createdBy: number;
 }
+
+export interface PublicOccupationType   {
+    name: string;
+    details: string | null;
+}

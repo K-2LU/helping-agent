@@ -14,3 +14,7 @@ export interface PaginatedResult<T> {
     meta: PaginationMeta;
     data: T[];
 }
+
+export interface SearchResult<T> {
+  data: T[];
+}
