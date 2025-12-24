@@ -3,8 +3,7 @@ import router from "@adonisjs/core/services/router";
 const OccupationsController = () => import("#controllers/occupations_controller")
 
 router.group(() => {
-    router.get('/', [OccupationsController, 'get'])
-    router.get('/search', [OccupationsController, 'search'])
+    router.get('/', [OccupationsController, 'index'])
 
     router.group(() => { 
         router.post('/', [OccupationsController, 'create'])
