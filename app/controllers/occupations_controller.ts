@@ -28,20 +28,20 @@ export default class OccupationsController {
 
     async get({ request, response }: HttpContext) {
         const payload = await request.validateUsing(paginationValidatorWithDefault)
-        const result =  await this.occupationService
-        .get(payload.page, payload.limit)
+        const result = await this.occupationService
+            .get(payload.page, payload.limit)
 
         return response.ok(result)
     }
 
-    async search({request, response}: HttpContext)  {
+    async search({ request, response }: HttpContext) {
         const payload = await request.validateUsing(SearchParamsValidator, {
             messagesProvider: new SimpleMessagesProvider(searchParamsMessages)
         });
-        
-        const safeLimit = payload.limit || 3;
-        const result = await this.occupationService.search(payload.searchString, safeLimit);
-        
+
+        const result = await this.occupationService.get(
+            payload.page, payload.limit, payload.searchString);
+
         return response.ok(result);
     }
 }

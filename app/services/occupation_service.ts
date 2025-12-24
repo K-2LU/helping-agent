@@ -13,14 +13,18 @@ export class OccupationService {
     return query;
   }
 
-  async get(page: number, limit: number)
+  async get(page: number, limit: number, searchString?: string)
     : Promise<PaginatedResult<PublicOccupationType>> {
 
-    const occupationList = await Occupation.query()
+    const query = Occupation.query()
       .select('name', 'details')
       .orderBy('created_at', 'desc')
-      .paginate(page, limit)
 
+    if (searchString) {
+      query.whereILike('name', `%${searchString}%`);
+    }
+
+    const occupationList = await query.paginate(page, limit);
     const serializedData = occupationList.serialize()
 
     const publicOccupations: PublicOccupationType[] = occupationList.all()
@@ -35,24 +39,5 @@ export class OccupationService {
       meta: serializedData.meta,
       data: publicOccupations
     }
-  }
-
-  async search(searchString: string, limit: number) 
-  : Promise<PublicOccupationType[]>  
-  {
-    const result = await Occupation.query()
-    .select('name', 'details')
-    .whereILike('name', `%${searchString}%`)
-    .orderBy('created_at', 'desc')
-    .limit(limit)
-
-    const searchResult: PublicOccupationType[] = result.map((occupation) => {
-      return {
-        name: occupation.name,
-        details: occupation.details,
-      }
-    })
-
-    return searchResult;
   }
 }

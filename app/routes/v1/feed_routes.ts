@@ -4,7 +4,7 @@ const FeedController = () => import("#controllers/feed_controller");
 router.group(() => {
     // public routes
     router.group(()=>{
-        router.get('/get-all', [FeedController, 'getAllUsers'])
+        router.get('/', [FeedController, 'getAllUsers'])
     })
 
     // protected routes
