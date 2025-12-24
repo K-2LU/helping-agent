@@ -1,5 +1,5 @@
 import { OccupationService } from '#services/occupation_service';
-import { searchParamsMessages, SearchParamsValidator } from '#validators/common';
+import { searchParamsMessages, SearchParamsValidator } from '#validators/search';
 import { CreateOccupationValidator } from '#validators/occupation';
 import { paginationValidatorWithDefault } from '#validators/paginate';
 import { inject } from '@adonisjs/core';
@@ -32,5 +32,16 @@ export default class OccupationsController {
         .get(payload.page, payload.limit)
 
         return response.ok(result)
+    }
+
+    async search({request, response}: HttpContext)  {
+        const payload = await request.validateUsing(SearchParamsValidator, {
+            messagesProvider: new SimpleMessagesProvider(searchParamsMessages)
+        });
+        
+        const safeLimit = payload.limit || 3;
+        const result = await this.occupationService.search(payload.searchString, safeLimit);
+        
+        return response.ok(result);
     }
 }
