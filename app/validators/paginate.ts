@@ -1,14 +1,11 @@
 import vine from '@vinejs/vine'
 
-export const paginationValidator = vine.compile(
-    vine.object({
-        page: vine.number().min(1).optional(),
+export const paginationSchema = {
+        page: vine.number().min(1),
         limit: vine.number().min(1).max(50).optional(),
-    })
-)
+}
 
-export const paginationValidatorWithDefault = vine.compile(
-    vine.object({
+export const paginationSchemaWithDefault = {
         page: vine.number().optional().transform((value) => {
             if (!value || value < 1) return 1;
             return value;
@@ -19,5 +16,12 @@ export const paginationValidatorWithDefault = vine.compile(
             if (value < 1) return 10;
             return value;
         }),
-    })
+    }
+
+export const paginationValidator = vine.compile(
+    vine.object(paginationSchema)
+)
+
+export const paginationValidatorWithDefault = vine.compile(
+    vine.object(paginationSchemaWithDefault)
 )
