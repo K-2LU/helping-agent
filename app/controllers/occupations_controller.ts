@@ -1,4 +1,3 @@
-import { AuthService } from '#services/auth_service';
 import { OccupationService } from '#services/occupation_service';
 import { CreateOccupationValidator } from '#validators/occupation';
 import { inject } from '@adonisjs/core';
@@ -7,7 +6,6 @@ import type { HttpContext } from '@adonisjs/core/http'
 @inject()
 export default class OccupationsController {
     constructor(
-        protected authService: AuthService,
         protected occupationService: OccupationService
     ) { }
 
