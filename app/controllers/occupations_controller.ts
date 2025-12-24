@@ -1,10 +1,8 @@
 import { OccupationService } from '#services/occupation_service';
-import { searchParamsMessages, SearchParamsValidator } from '#validators/search';
+import { SearchParamsValidator } from '#validators/search';
 import { CreateOccupationValidator } from '#validators/occupation';
-import { paginationValidatorWithDefault } from '#validators/paginate';
 import { inject } from '@adonisjs/core';
 import type { HttpContext } from '@adonisjs/core/http'
-import { SimpleMessagesProvider } from '@vinejs/vine';
 
 @inject()
 export default class OccupationsController {
@@ -26,22 +24,16 @@ export default class OccupationsController {
         return response.created(result)
     }
 
-    async get({ request, response }: HttpContext) {
-        const payload = await request.validateUsing(paginationValidatorWithDefault)
+    async index({ request, response }: HttpContext) {
+
+        const payload = await request.validateUsing(SearchParamsValidator)
         const result = await this.occupationService
-            .get(payload.page, payload.limit)
+            .get(
+                payload.page,
+                payload.limit,
+                payload.searchString
+            )
 
         return response.ok(result)
-    }
-
-    async search({ request, response }: HttpContext) {
-        const payload = await request.validateUsing(SearchParamsValidator, {
-            messagesProvider: new SimpleMessagesProvider(searchParamsMessages)
-        });
-
-        const result = await this.occupationService.get(
-            payload.page, payload.limit, payload.searchString);
-
-        return response.ok(result);
     }
 }
