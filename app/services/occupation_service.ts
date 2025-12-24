@@ -36,4 +36,23 @@ export class OccupationService {
       data: publicOccupations
     }
   }
+
+  async search(searchString: string, limit: number) 
+  : Promise<PublicOccupationType[]>  
+  {
+    const result = await Occupation.query()
+    .select('name', 'details')
+    .whereILike('name', `%${searchString}%`)
+    .orderBy('created_at', 'desc')
+    .limit(limit)
+
+    const searchResult: PublicOccupationType[] = result.map((occupation) => {
+      return {
+        name: occupation.name,
+        details: occupation.details,
+      }
+    })
+
+    return searchResult;
+  }
 }
