@@ -1,5 +1,6 @@
 import { AuthService } from '#services/auth_service';
 import { OccupationService } from '#services/occupation_service';
+import { CreateOccupationValidator } from '#validators/occupation';
 import { inject } from '@adonisjs/core';
 import type { HttpContext } from '@adonisjs/core/http'
 
@@ -12,13 +13,14 @@ export default class OccupationsController {
 
     async create({ auth, request, response }: HttpContext) {
         const user = auth.getUserOrFail();
-
-        const name = request.input('name');
-        const details = request.input('details')
-        const createdBy = user.id;
+        const payload = await request.validateUsing(CreateOccupationValidator);
 
         const result = await this.occupationService
-            .create({ name, details, createdBy })
+            .create({
+                name: payload.name,
+                details: payload.details,
+                createdBy: user.id
+            })
 
         return response.created(result)
     }
